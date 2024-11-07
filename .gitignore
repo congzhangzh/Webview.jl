@@ -1,0 +1,9 @@
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+/deps/deps.jl
+/deps/*.dll
+/deps/*.so
+/deps/*.dylib
+Manifest.toml
+.DS_Store 

@@ -1,0 +1,16 @@
+name = "WebView"
+uuid = "177c2e11-3391-4e92-b8bd-bdc0b6c91f11"
+authors = ["Your Name <your.email@example.com>"]
+version = "0.1.0"
+
+[deps]
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+
+[compat]
+julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"] 
