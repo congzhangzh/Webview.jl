@@ -1,12 +1,12 @@
-using WebView
+using webview_julia:Webview
 
 function main()
     # 创建窗口
     wv = Webview(false)
     
     # 设置窗口属性
-    set_title(wv, "My WebView App")
-    set_size(wv, 800, 600)
+    wv.set_title("My WebView App")
+    wv.set_size(800, 600)
     
     # HTML内容
     html = """
@@ -40,10 +40,10 @@ function main()
         </html>
     """
     
-    navigate(wv, "data:text/html,$(html)")
+    wv.navigate("data:text/html,$(html)")
     
     # 运行
-    run(wv)
+    wv.run()
 end
 
 main() 

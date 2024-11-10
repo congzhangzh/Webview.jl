@@ -7,3 +7,6 @@
 /deps/*.dylib
 Manifest.toml
 .DS_Store 
+lib/
+compiled_app/
+dist/

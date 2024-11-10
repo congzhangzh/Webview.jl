@@ -1,16 +1,23 @@
-name = "WebView"
-uuid = "177c2e11-3391-4e92-b8bd-bdc0b6c91f11"
-authors = ["Your Name <your.email@example.com>"]
-version = "0.1.0"
+name = "webview_julia"
+uuid = "177c2d55-3391-4e92-b8bd-bdc0b6c91f34"
+authors = ["Cong Zhang <wip@wip.com>"]
+version = "0.99.0"
 
 [deps]
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 
 [compat]
-julia = "1.6"
+julia = "1.10"
+JSON = "0.21"
+HTTP = "1.10"
+PackageCompiler = "2.1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"] 
+test = ["Test", "PackageCompiler"]

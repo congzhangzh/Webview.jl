@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "julia",
+            "request": "launch",
+            "name": "Launch Simple Example",
+            "program": "${workspaceFolder}/examples/simple_example.jl",
+            "stopOnEntry": false,
+            "cwd": "${workspaceFolder}",
+            // "juliaEnv": "${workspaceFolder}"
+            "env": {
+                "JULIA_PROJECT": "${workspaceFolder}"  // 设置项目环境
+            }
+        },
+        {
+            "type": "julia",
+            "request": "launch",
+            "name": "Debug Current File",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            // "juliaEnv": "${workspaceFolder}",
+            // "julia.includePath": [
+            //     "${workspaceFolder}/src",
+            //     "${workspaceFolder}/test"
+            // ],
+            "env": {
+                "JULIA_PROJECT": "${workspaceFolder}"  // 设置项目环境
+            }
+        }
+    ]
+}

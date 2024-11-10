@@ -1,26 +1,17 @@
 using Downloads
 using Libdl
 
-function download_webview()
-    @static if Sys.iswindows()
-        url = "https://github.com/webview/webview/releases/latest/download/webview.dll"
-        filename = "webview.dll"
-    elseif Sys.isapple()
-        url = "https://github.com/webview/webview/releases/latest/download/libwebview.dylib"
-        filename = "libwebview.dylib"
-    else
-        url = "https://github.com/webview/webview/releases/latest/download/libwebview.so"
-        filename = "libwebview.so"
-    end
+# 导入 FFI 模块的代码
+include("../src/ffi.jl")
+using .FFI: _ensure_libraries
 
-    dest = joinpath(@__DIR__, "..", "deps", filename)
-    mkpath(dirname(dest))
-    
+function download_webview()
+    # 直接使用 FFI 中的实现
     try
-        Downloads.download(url, dest)
-        @info "Successfully downloaded webview library to $dest"
+        libs = _ensure_libraries()
+        @info "Successfully downloaded webview libraries: $libs"
     catch e
-        @error "Failed to download webview library: $e"
+        @error "Failed to download webview libraries: $e"
         rethrow(e)
     end
 end
