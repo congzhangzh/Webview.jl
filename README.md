@@ -63,31 +63,67 @@ wv.run()
 
 ### Julia-JavaScript Bindings:
 ```julia
+#!/usr/bin/env julia
+
 using Webview
+using JSON
 using HTTP
 
-wv = WebviewObj(true)  # Enable debug mode
+    # 创建HTML内容
+    html = raw"""
+    <!DOCTYPE html>
+    <html>
+    <body>
+        <h1>Julia-JavaScript Binding Demo</h1>
+        <button onclick="callJulia()">Call Julia</button>
+        <button onclick="callJuliaWithArgs(10, 20)">Add Numbers</button>
+        <div id="result"></div>
 
-# Julia functions that can be called from JavaScript
-function hello()
-    println("Hello from Julia!")
-    return "Hello from JavaScript!"
-end
+        <script>
+            async function callJulia() {
+                const result = await window.hello();
+                document.getElementById('result').innerHTML = result;
+            }
 
-function add(a, b)
-    return a + b
-end
+            async function callJuliaWithArgs(a, b) {
+                const result = await window.add(a, b);
+                document.getElementById('result').innerHTML = `Result: ${result}`;
+            }
 
-# HTML content with JavaScript
-html = """
-<!DOCTYPE html>
-<html>
-<body>
-    <h1>Julia-JavaScript Binding Demo</h1>
-    <button onclick="hello()">Call Julia</button>
-    <button onclick="add(1, 2)">Calculate 1 + 2</button>
-</body>
-</html>
+            function updateFromJulia(message) {
+                document.getElementById('result').innerHTML = message;
+            }
+        </script>
+    </body>
+    </html>
+    """
+    # TODO
+    # 创建webview实例
+    w = WebviewObj(true)
+
+    # 定义要从JavaScript调用的Julia函数
+    function hello()
+        w.eval("console.log('Hello from Julia!')")
+        return "Hello from Julia!"
+    end
+
+    function add(a,b)
+        return a + b
+    end
+
+    # 绑定Julia函数
+    w.bind("hello", hello)
+    w.bind("add", add)
+
+    # 设置窗口属性
+    w.set_title("Julia-JavaScript Binding Demo")
+    w.set_size(640, 480)
+
+    # 加载HTML内容
+    w.navigate("data:text/html," * HTTP.escapeuri(html))
+
+    # 运行webview
+    w.run()
 """
 
 # Configure window
