@@ -1,6 +1,6 @@
-# WebView.jl
+# webview_julia
 
-[![Build Status](https://github.com/yourusername/WebView.jl/workflows/CI/badge.svg)](https://github.com/yourusername/WebView.jl/actions)
+[![Build Status](https://github.com/congzhangzh/webview_julia/workflows/CI/badge.svg)](https://github.com/congzhangzh/webview_julia/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Julia bindings for the [webview](https://github.com/webview/webview) library, allowing you to create desktop applications with web technologies.
@@ -133,11 +133,12 @@ julia -e 'using Pkg; Pkg.test("webview_julia")'
 version = "x.y.z"
 ```
 
-3. **Create Release**
+3. Trigger register bot by commit:
 ```bash
-# Tag version
-git tag vx.y.z
-git push origin vx.y.z
+git commit -m "release: vx.y.z
+
+@JuliaRegistrator register"
+git push
 ```
 
 ## Examples
