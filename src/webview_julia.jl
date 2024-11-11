@@ -2,26 +2,63 @@ module webview_julia
 
 include("ffi.jl")
 using .FFI
+using JSON
 
 export Webview
 
-# 保存回调函数的引用，改用复合key防止冲突
-const CALLBACKS = Dict{Tuple{Ptr{Cvoid}, String}, Function}()
+# 定义一个可变类型来存储回调相关数据
+mutable struct CallbackData
+    handle::Ptr{Cvoid}
+    name::String
+    callback::Function
+end
+
+# 使用简单的字典存储回调数据
+const CALLBACKS = Dict{Tuple{Ptr{Cvoid}, String}, CallbackData}()
 
 # 回调函数的C兼容包装器
-function callback_c_wrapper(seq::Ptr{Cvoid}, req::Ptr{Cchar}, arg::Ptr{Cvoid})::Cvoid
+function callback_c_wrapper(seq::Ptr{Cchar}, req::Ptr{Cchar}, arg::Ptr{Cvoid})::Cvoid
+    seq_str = unsafe_string(seq)
     req_str = unsafe_string(req)
-    if haskey(CALLBACKS, arg)
-        try
-            CALLBACKS[arg](req_str)
-        catch e
-            @error "Error in callback" exception=e
+    
+    # debug:
+    println("callback_c_wrapper: seq_str = $seq_str, req_str = $req_str, arg = $arg")
+    # 恢复可变对象 - 得到的是引用，指向同一个对象
+    data = unsafe_pointer_to_objref(arg)::CallbackData
+    
+    try
+        args = JSON.parse(req_str)
+        result = data.callback(args...)  # 直接使用恢复的对象即可
+        
+        if result isa Task
+            @async begin
+                try
+                    final_result = fetch(result)
+                    result_json = JSON.json(final_result)
+                    FFI.webview_return(data.handle, seq_str, Int32(0), result_json)
+                catch e
+                    FFI.webview_return(data.handle, seq_str, Int32(1), string(e))
+                end
+            end
+        else
+            result_json = JSON.json(result)
+            FFI.webview_return(data.handle, seq_str, Int32(0), result_json)
         end
+    catch e
+        FFI.webview_return(data.handle, seq_str, Int32(1), string(e))
     end
+    
     return nothing
 end
 
-const C_CALLBACK = @cfunction(callback_c_wrapper, Cvoid, (Ptr{Cvoid}, Ptr{Cchar}, Ptr{Cvoid}))
+
+function test_callback(seq::Ptr{Cchar}, req::Ptr{Cchar}, arg::Ptr{Cvoid})::Cvoid
+    seq_str = unsafe_string(seq)
+    req_str = unsafe_string(req)
+    println("test_callback: seq_str = $seq_str, req_str = $req_str, arg = $arg")
+end
+
+const C_CALLBACK = @cfunction(callback_c_wrapper, Cvoid, (Ptr{Cchar}, Ptr{Cchar}, Ptr{Cvoid}))
 
 mutable struct Webview
     handle::Ptr{Cvoid}
@@ -58,9 +95,23 @@ function Base.getproperty(self::Webview, sym::Symbol)
         return (js) -> FFI.webview_eval(self.handle, js)
     elseif sym === :bind
         return (name::String, callback::Function) -> begin
-            # 使用(handle, name)作为复合key来存储回调
-            CALLBACKS[(self.handle, name)] = callback
-            FFI.webview_bind(self.handle, name, C_CALLBACK, name)
+            key = (self.handle, name)
+            # 创建可变对象存储数据
+            data = CallbackData(self.handle, name, callback)
+            # 先存储到字典中，确保数据不会被GC
+            CALLBACKS[key] = data
+            # 使用已存储在字典中的对象创建指针
+            arg_ref = pointer_from_objref(CALLBACKS[key])
+            FFI.webview_bind(self.handle, name, C_CALLBACK, arg_ref)
+
+        end
+    elseif sym === :unbind
+        return (name::String) -> begin
+            handle_and_name = (self.handle, name)
+            if haskey(CALLBACKS, handle_and_name)
+                delete!(CALLBACKS, handle_and_name)
+                FFI.webview_unbind(self.handle, name)
+            end
         end
     else
         return getfield(self, sym)

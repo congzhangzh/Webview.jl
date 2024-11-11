@@ -1,8 +1,8 @@
 #!/usr/bin/env julia
 
-module BindExample
-
-using webview_julia
+#WIP: https://discourse.julialang.org/t/segfault-with-ccall-when-the-code-is-loaded-as-package/63017
+#using webview_julia
+include("../src/webview_julia.jl")
 using JSON
 using HTTP
 
@@ -18,16 +18,14 @@ function main()
         <div id="result"></div>
 
         <script>
-            function callJulia() {
-                window.julia.hello().then(result => {
-                    document.getElementById('result').innerHTML = result;
-                });
+            async function callJulia() {
+                const result = await window.hello();
+                document.getElementById('result').innerHTML = result;
             }
 
-            function callJuliaWithArgs(a, b) {
-                window.julia.add(a, b).then(result => {
-                    document.getElementById('result').innerHTML = `Result: ${result}`;
-                });
+            async function callJuliaWithArgs(a, b) {
+                const result = await window.add(a, b);
+                document.getElementById('result').innerHTML = `Result: ${result}`;
             }
 
             function updateFromJulia(message) {
@@ -37,9 +35,9 @@ function main()
     </body>
     </html>
     """
-
+    # TODO
     # 创建webview实例
-    w = Webview(true)
+    w = webview_julia.Webview(true)
 
     # 定义要从JavaScript调用的Julia函数
     function hello()
@@ -47,10 +45,8 @@ function main()
         return "Hello from Julia!"
     end
 
-    function add(req_str)
-        args = JSON.parse(req_str)
-        result = args[1] + args[2]
-        return string(result)
+    function add(a,b)
+        return a + b
     end
 
     # 绑定Julia函数
@@ -72,5 +68,3 @@ end
 if abspath(PROGRAM_FILE) == @__FILE__
     main()
 end
-
-end # module 

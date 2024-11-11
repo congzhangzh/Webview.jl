@@ -130,4 +130,18 @@ function webview_terminate(handle::Ptr{Cvoid})
     ccall((:webview_terminate, libwebview_path), Cvoid, (Ptr{Cvoid},), handle)
 end
 
+# 添加 webview_return 函数定义
+function webview_return(handle::Ptr{Cvoid}, seq::String, status::Int32, result::String)
+    ccall((:webview_return, libwebview_path), Cvoid, 
+          (Ptr{Cvoid}, Cstring, Int32, Cstring),
+          handle, seq, status, result)
+end
+
+# 添加 webview_unbind 函数定义
+function webview_unbind(handle::Ptr{Cvoid}, name::String)
+    ccall((:webview_unbind, libwebview_path), Cvoid, 
+          (Ptr{Cvoid}, Cstring),
+          handle, name)
+end
+
 end # module 
