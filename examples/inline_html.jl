@@ -1,8 +1,8 @@
-using webview_julia:Webview
+using Webview
 
 function main()
     # 创建窗口
-    wv = Webview(false)
+    wv = WebviewObj(false)
     
     # 设置窗口属性
     wv.set_title("My WebView App")

@@ -1,14 +1,13 @@
-using webview_julia:Webview
+using Webview
 using Test
 
 @testset "WebView.jl" begin
-    # 方法1：使用 @testset 和 skip
     @testset "Platform tests" begin
         if Sys.isapple()
             @info "Skipping tests on Apple platform"
         else
             # Basic creation test
-            wv = WebView(false)
+            wv = WebviewObj(false)
             @test wv.handle != C_NULL
             @test wv.debug == false
             

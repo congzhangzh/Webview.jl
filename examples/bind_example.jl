@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 
 #WIP: https://discourse.julialang.org/t/segfault-with-ccall-when-the-code-is-loaded-as-package/63017
-using webview_julia
+using Webview
 #include("../src/webview_julia.jl")
 using JSON
 using HTTP
@@ -37,7 +37,7 @@ function main()
     """
     # TODO
     # 创建webview实例
-    w = webview_julia.Webview(true)
+    w = WebviewObj(true)
 
     # 定义要从JavaScript调用的Julia函数
     function hello()

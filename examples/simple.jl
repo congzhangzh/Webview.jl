@@ -2,10 +2,10 @@
 # push!(LOAD_PATH, dirname(dirname(@__FILE__)))
 
 #using webview_julia  # 使用小写包名
-using webview_julia
+using Webview
 
 # Create a new webview instance
-wv = Webview(true)  # debug mode enabled
+wv = WebviewObj(true)  # 修改构造函数调用
 
 # Set window properties
 wv.set_title("My Webview App")

@@ -9,15 +9,35 @@ Julia bindings for the [webview](https://github.com/webview/webview) library, al
 
 ```julia
 using Pkg
-Pkg.add("webview_julia")
+Pkg.add("Webview")
 ```
 
 ## Usage
 
+### Open a website
+```julia
+```julia
+using Webview
+
+wv = WebviewObj()
+wv.navigate("https://julialang.org")
+wv.run()
+```
+
+### Do something in webview scope
+```julia
+using Webview
+
+run_webview() do w
+    w.set_title("Test")
+    w.navigate("https://example.com")
+end
+```
+
 ### Display Inline HTML:
 ```julia
 using HTTP
-using webview_julia
+using Webview
 
 html = """
 <!DOCTYPE html>
@@ -35,7 +55,7 @@ wv.run()
 
 ### Load Remote URL:
 ```julia
-using webview_julia
+using Webview
 
 wv = Webview()
 wv.navigate("https://julialang.org")
@@ -44,7 +64,7 @@ wv.run()
 
 ### Julia-JavaScript Bindings:
 ```julia
-using webview_julia
+using Webview
 using HTTP
 
 wv = Webview(true)  # Enable debug mode

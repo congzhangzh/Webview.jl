@@ -1,10 +1,10 @@
-module webview_julia
+module Webview
 
 include("ffi.jl")
 using .FFI
 using JSON
 
-export Webview
+export WebviewObj, with_webview, run_webview
 
 # 定义一个可变类型来存储回调相关数据
 mutable struct CallbackData
@@ -66,11 +66,11 @@ function __init__()
     C_CALLBACK_REF[] = @cfunction(callback_c_wrapper, Cvoid, (Ptr{Cchar}, Ptr{Cchar}, Ptr{Cvoid}))
 end
 
-mutable struct Webview
+mutable struct WebviewObj
     handle::Ptr{Cvoid}
     debug::Bool
     
-    function Webview(debug::Bool = false)
+    function WebviewObj(debug::Bool = false)
         handle = FFI.webview_create(Int32(debug), C_NULL)
         w = new(handle, debug)
         finalizer(w) do x
@@ -84,7 +84,7 @@ mutable struct Webview
     end
 end
 
-function Base.getproperty(self::Webview, sym::Symbol)
+function Base.getproperty(self::WebviewObj, sym::Symbol)
     if sym === :run
         return () -> (FFI.webview_run(self.handle); self.destroy())
     elseif sym === :destroy
@@ -125,7 +125,7 @@ function Base.getproperty(self::Webview, sym::Symbol)
 end
 
 # 确保在Webview被销毁时清理回调
-function Base.close(self::Webview)
+function Base.close(self::WebviewObj)
     if self.handle == C_NULL  # 已经关闭
         return
     end
@@ -142,7 +142,7 @@ function Base.close(self::Webview)
 end
 
 function with_webview(f::Function, debug::Bool=false)
-    w = Webview(debug)
+    w = WebviewObj(debug)
     try
         f(w)
     finally

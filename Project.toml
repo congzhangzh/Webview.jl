@@ -1,4 +1,4 @@
-name = "webview_julia"
+name = "Webview"
 uuid = "177c2d55-3391-4e92-b8bd-bdc0b6c91f34"
 authors = ["Cong Zhang <wip@wip.com>"]
 version = "0.99.0"
