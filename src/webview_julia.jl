@@ -58,7 +58,13 @@ function test_callback(seq::Ptr{Cchar}, req::Ptr{Cchar}, arg::Ptr{Cvoid})::Cvoid
     println("test_callback: seq_str = $seq_str, req_str = $req_str, arg = $arg")
 end
 
-const C_CALLBACK = @cfunction(callback_c_wrapper, Cvoid, (Ptr{Cchar}, Ptr{Cchar}, Ptr{Cvoid}))
+# why so trick:
+#   https://docs.julialang.org/en/v1/manual/modules/
+#   https://discourse.julialang.org/t/segfault-with-ccall-when-the-code-is-loaded-as-package/63017
+const C_CALLBACK_REF = Ref(C_NULL)
+function __init__()
+    C_CALLBACK_REF[] = @cfunction(callback_c_wrapper, Cvoid, (Ptr{Cchar}, Ptr{Cchar}, Ptr{Cvoid}))
+end
 
 mutable struct Webview
     handle::Ptr{Cvoid}
@@ -102,7 +108,7 @@ function Base.getproperty(self::Webview, sym::Symbol)
             CALLBACKS[key] = data
             # 使用已存储在字典中的对象创建指针
             arg_ref = pointer_from_objref(CALLBACKS[key])
-            FFI.webview_bind(self.handle, name, C_CALLBACK, arg_ref)
+            FFI.webview_bind(self.handle, name, C_CALLBACK_REF[], arg_ref)
 
         end
     elseif sym === :unbind

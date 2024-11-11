@@ -9,13 +9,14 @@ Julia bindings for the [webview](https://github.com/webview/webview) library, al
 
 ```julia
 using Pkg
-Pkg.add("WebView")
+Pkg.add("webview_julia")
 ```
 
 ## Usage
 
 ### Display Inline HTML:
 ```julia
+using HTTP
 using WebView
 
 html = """
@@ -27,25 +28,26 @@ html = """
 </html>
 """
 
-webview = Webview()
-navigate(webview, "data:text/html,$(html)")
-run(webview)
+wv = Webview()
+wv.navigate("data:text/html," * HTTP.escapeuri(html))
+wv.run()
 ```
 
 ### Load Remote URL:
 ```julia
 using WebView
 
-webview = Webview()
-navigate(webview, "https://julialang.org")
-run(webview)
+wv = Webview()
+wv.navigate("https://julialang.org")
+wv.run()
 ```
 
 ### Julia-JavaScript Bindings:
 ```julia
 using WebView
+using HTTP
 
-webview = Webview(true)  # Enable debug mode
+wv = Webview(true)  # Enable debug mode
 
 # Julia functions that can be called from JavaScript
 function hello()
@@ -70,21 +72,21 @@ html = """
 """
 
 # Configure window
-set_title(webview, "Binding Demo")
-set_size(webview, 800, 600)
+wv.set_title("Binding Demo")
+wv.set_size(800, 600)
 
-navigate(webview, "data:text/html,$(html)")
-run(webview)
+wv.navigate("data:text/html," * HTTP.escapeuri(html))
+wv.run()
 ```
 
 ### Creating Standalone Executable:
 ```julia
 using PackageCompiler
 
-create_app(".", "WebViewApp";
+create_app(".", "compiled_app/bind_example";
     force=true,
     include_lazy_artifacts=true,
-    executables=["app.jl" => "webview_app"])
+    executables=["bind_example.jl" => "bind_example"])
 ```
 
 ## Features
@@ -120,10 +122,10 @@ WebView.jl/
 1. **Test**
 ```bash
 # Run tests
-julia -e 'using Pkg; Pkg.test("WebView")'
+julia -e 'using Pkg; Pkg.test("webview_julia")'
 
 # Build documentation
-julia --project=docs/ docs/make.jl
+# julia --project=docs/ docs/make.jl
 ```
 
 2. **Update Version in Project.toml**

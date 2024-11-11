@@ -1,8 +1,8 @@
 #!/usr/bin/env julia
 
 #WIP: https://discourse.julialang.org/t/segfault-with-ccall-when-the-code-is-loaded-as-package/63017
-#using webview_julia
-include("../src/webview_julia.jl")
+using webview_julia
+#include("../src/webview_julia.jl")
 using JSON
 using HTTP
 
