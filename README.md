@@ -16,7 +16,6 @@ Pkg.add("Webview")
 
 ### Open a website
 ```julia
-```julia
 using Webview
 
 wv = WebviewObj()
