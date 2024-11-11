@@ -124,7 +124,6 @@ using HTTP
 
     # 运行webview
     w.run()
-"""
 
 # Configure window
 wv.set_title("Binding Demo")
