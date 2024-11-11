@@ -48,7 +48,7 @@ html = """
 </html>
 """
 
-wv = Webview()
+wv = WebviewObj()
 wv.navigate("data:text/html," * HTTP.escapeuri(html))
 wv.run()
 ```
@@ -57,7 +57,7 @@ wv.run()
 ```julia
 using Webview
 
-wv = Webview()
+wv = WebviewObj()
 wv.navigate("https://julialang.org")
 wv.run()
 ```
@@ -67,7 +67,7 @@ wv.run()
 using Webview
 using HTTP
 
-wv = Webview(true)  # Enable debug mode
+wv = WebviewObj(true)  # Enable debug mode
 
 # Julia functions that can be called from JavaScript
 function hello()
