@@ -17,7 +17,7 @@ Pkg.add("webview_julia")
 ### Display Inline HTML:
 ```julia
 using HTTP
-using WebView
+using webview_julia
 
 html = """
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ wv.run()
 
 ### Load Remote URL:
 ```julia
-using WebView
+using webview_julia
 
 wv = Webview()
 wv.navigate("https://julialang.org")
@@ -44,7 +44,7 @@ wv.run()
 
 ### Julia-JavaScript Bindings:
 ```julia
-using WebView
+using webview_julia
 using HTTP
 
 wv = Webview(true)  # Enable debug mode
